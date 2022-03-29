@@ -1,7 +1,8 @@
+import re
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 import datetime as dt
-from .models import Article
+from .models import Article, NewsLetterRecipient
 from django.core.exceptions import ObjectDoesNotExist
 from .forms import NewsletterForm
 
@@ -16,7 +17,12 @@ def news_today(request):
     if request.method == 'POST':
         form = NewsletterForm(request.POST)
         if form.is_valid():
-            print('valid')
+            name = form.cleaned_data['your_name']
+            email = form.cleaned_data['email']
+            recipient = NewsLetterRecipient(name = name, email = email)
+            recipient.save()
+            return redirect(news_today)
+
     else:
         form = NewsletterForm()
 
