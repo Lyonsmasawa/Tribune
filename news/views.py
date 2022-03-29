@@ -3,6 +3,7 @@ from django.http import HttpResponse, Http404
 import datetime as dt
 from .models import Article
 from django.core.exceptions import ObjectDoesNotExist
+from .forms import NewsletterForm
 
 # Create your views here.================
 
@@ -11,7 +12,15 @@ def news_today(request):
     date = dt.date.today()
     # day = convert_dates(date)
     news = Article.today_news()
-    return render(request, 'all-news/today-news.html', {"date":date, "news":news})
+
+    if request.method == 'POST':
+        form = NewsletterForm(request.POST)
+        if form.is_valid():
+            print('valid')
+    else:
+        form = NewsletterForm()
+
+    return render(request, 'all-news/today-news.html', {"date":date, "news":news, "letterform":form,})
 
 def past_days_news(request, past_date):
     
